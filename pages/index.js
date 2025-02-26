@@ -12,7 +12,6 @@ const App = () => {
 
   const CATEGORIES = ["All", "Sports", "Headlines", "Entertainment"];
 
-  /
   const fetchNews = useCallback(
     async (reset = false) => {
       setLoading(true);
@@ -21,20 +20,11 @@ const App = () => {
           `http://localhost:5000/news?page=${reset ? 1 : page}`
         );
         const data = await response.json();
-
-        console.log("Fetched News:", data); 
-
-     
         const filteredData =
-          category === "All"
-            ? data
-            : data.filter(
-                (n) => n.tag?.toLowerCase() === category.toLowerCase()
-              );
-
+          category === "All" ? data : data.filter((n) => n.tag === category);
         setNews(
           reset ? filteredData : [...new Set([...news, ...filteredData])]
-        ); 
+        );
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -43,7 +33,6 @@ const App = () => {
     [page, category]
   );
 
- 
   useEffect(() => {
     fetchNews(true);
   }, [category]);
@@ -51,7 +40,6 @@ const App = () => {
   useEffect(() => {
     if (page > 1) fetchNews();
   }, [page]);
-
 
   const handleCategoryChange = (newCategory) => {
     if (newCategory !== category) {
@@ -61,7 +49,6 @@ const App = () => {
     }
   };
 
-  
   useEffect(() => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
@@ -74,7 +61,6 @@ const App = () => {
       observer.current.observe(document.querySelector("#lastNews"));
   }, [loading, news]);
 
- 
   const handleLike = async (id) => {
     const response = await fetch(`http://localhost:5000/news/${id}/like`, {
       method: "POST",
@@ -99,15 +85,12 @@ const App = () => {
     );
   };
 
-
   const handleDeleteNews = async (id) => {
     if (!window.confirm("Are you sure you want to delete this news?")) return;
-
     try {
       const response = await fetch(`http://localhost:5000/news/${id}`, {
         method: "DELETE",
       });
-
       if (response.ok) {
         setNews((prevNews) => prevNews.filter((article) => article.id !== id));
       } else {
@@ -118,7 +101,6 @@ const App = () => {
     }
   };
 
-  
   const handleCreateNews = async (e) => {
     e.preventDefault();
     if (!newTitle || !newContent || !newCategory)
@@ -135,12 +117,7 @@ const App = () => {
     });
 
     const newArticle = await response.json();
-    console.log("New article created:", newArticle); 
-
-    if (
-      category === "All" ||
-      category.toLowerCase() === newCategory.toLowerCase()
-    ) {
+    if (category === "All" || category === newCategory) {
       setNews((prevNews) => [newArticle, ...prevNews]);
     }
 
@@ -152,8 +129,6 @@ const App = () => {
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
       <h1>News Feed</h1>
-
-    
       <div
         style={{
           display: "flex",
@@ -179,8 +154,6 @@ const App = () => {
           </button>
         ))}
       </div>
-
-
       <form onSubmit={handleCreateNews} style={{ marginBottom: "20px" }}>
         <input
           type="text"
@@ -207,7 +180,6 @@ const App = () => {
             padding: "8px",
           }}
         />
-       
         <select
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
@@ -219,20 +191,14 @@ const App = () => {
             padding: "8px",
           }}
         >
-          {CATEGORIES.slice(1).map(
-            (
-              category 
-            ) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            )
-          )}
+          {CATEGORIES.slice(1).map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
         <button type="submit">Create News</button>
       </form>
-
-     
       {news.map((article, index) => (
         <div
           key={article.id}
@@ -265,7 +231,6 @@ const App = () => {
           </button>
         </div>
       ))}
-
       {loading && <p>Loading more news...</p>}
     </div>
   );
