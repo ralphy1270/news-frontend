@@ -12,7 +12,7 @@ const App = () => {
 
   const CATEGORIES = ["All", "Sports", "Headlines", "Entertainment"];
 
-  // Fetch news from backend with category filtering
+  /
   const fetchNews = useCallback(
     async (reset = false) => {
       setLoading(true);
@@ -22,9 +22,9 @@ const App = () => {
         );
         const data = await response.json();
 
-        console.log("Fetched News:", data); // Debugging: Check if Entertainment news is received
+        console.log("Fetched News:", data); 
 
-        // Ensure category comparison is case-insensitive
+     
         const filteredData =
           category === "All"
             ? data
@@ -34,7 +34,7 @@ const App = () => {
 
         setNews(
           reset ? filteredData : [...new Set([...news, ...filteredData])]
-        ); // Prevent duplicates
+        ); 
       } catch (error) {
         console.error("Error fetching news:", error);
       }
@@ -43,7 +43,7 @@ const App = () => {
     [page, category]
   );
 
-  // Load news when page or category changes
+ 
   useEffect(() => {
     fetchNews(true);
   }, [category]);
@@ -52,7 +52,7 @@ const App = () => {
     if (page > 1) fetchNews();
   }, [page]);
 
-  // Reset and fetch new news when changing categories
+
   const handleCategoryChange = (newCategory) => {
     if (newCategory !== category) {
       setCategory(newCategory);
@@ -61,7 +61,7 @@ const App = () => {
     }
   };
 
-  // Infinite scroll observer
+  
   useEffect(() => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
@@ -74,7 +74,7 @@ const App = () => {
       observer.current.observe(document.querySelector("#lastNews"));
   }, [loading, news]);
 
-  // Like and Dislike handlers
+ 
   const handleLike = async (id) => {
     const response = await fetch(`http://localhost:5000/news/${id}/like`, {
       method: "POST",
@@ -99,7 +99,7 @@ const App = () => {
     );
   };
 
-  // 🛑 Delete a news article
+
   const handleDeleteNews = async (id) => {
     if (!window.confirm("Are you sure you want to delete this news?")) return;
 
@@ -118,7 +118,7 @@ const App = () => {
     }
   };
 
-  // Create new news
+  
   const handleCreateNews = async (e) => {
     e.preventDefault();
     if (!newTitle || !newContent || !newCategory)
@@ -135,7 +135,7 @@ const App = () => {
     });
 
     const newArticle = await response.json();
-    console.log("New article created:", newArticle); // Debugging: Check if the category is stored correctly
+    console.log("New article created:", newArticle); 
 
     if (
       category === "All" ||
@@ -153,7 +153,7 @@ const App = () => {
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
       <h1>News Feed</h1>
 
-      {/* Navigation Tabs */}
+    
       <div
         style={{
           display: "flex",
@@ -180,7 +180,7 @@ const App = () => {
         ))}
       </div>
 
-      {/* Create News Form */}
+
       <form onSubmit={handleCreateNews} style={{ marginBottom: "20px" }}>
         <input
           type="text"
@@ -207,7 +207,7 @@ const App = () => {
             padding: "8px",
           }}
         />
-        {/* Category Selection */}
+       
         <select
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
@@ -221,7 +221,7 @@ const App = () => {
         >
           {CATEGORIES.slice(1).map(
             (
-              category // Skip "All" in the dropdown
+              category 
             ) => (
               <option key={category} value={category}>
                 {category}
@@ -232,7 +232,7 @@ const App = () => {
         <button type="submit">Create News</button>
       </form>
 
-      {/* News List */}
+     
       {news.map((article, index) => (
         <div
           key={article.id}
